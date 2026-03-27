@@ -91,3 +91,8 @@ The namespace prefix will be evaluated via the `handle` value defined in the con
 {# resolves to `templates/sites/mysite/header.twig` or errors #}
 {% include '@mysite/header.twig' %}
 ```
+
+```twig
+{# resolves to `templates/_global/header.twig` or errors #}
+{% include '@global/header.twig' %}
+```
