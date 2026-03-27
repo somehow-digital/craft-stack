@@ -1,0 +1,49 @@
+{
+	"name": "somehow-digital/craft-stack",
+	"description": "Brings a namespace system to better organize and load Twig templates in Craft CMS.",
+	"type": "craft-plugin",
+	"keywords": ["twig", "template", "namespace", "organization", "stack"],
+	"license": "MIT",
+	"homepage": "https://somehow.digital/",
+	"authors": [
+		{
+			"name": "Thomas Deinhamer",
+			"email": "code@thasmo.dev",
+			"homepage": "https://thasmo.com/"
+		}
+	],
+	"support": {
+		"email": "support@somehow.digital",
+		"docs": "https://github.com/somehow-digital/craft-stack",
+		"source": "https://github.com/somehow-digital/craft-stack",
+		"issues": "https://github.com/somehow-digital/craft-stack/issues"
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"sort-packages": true,
+		"allow-plugins": {
+			"craftcms/plugin-installer": true,
+			"yiisoft/yii2-composer": true
+		}
+	},
+	"require": {
+		"php": "^8.2",
+		"craftcms/cms": "^5.8.0"
+	},
+	"require-dev": {
+		"roave/security-advisories": "dev-latest"
+	},
+	"autoload": {
+		"psr-4": {
+			"SomehowDigital\\Craft\\Stack\\": "src/"
+		}
+	},
+	"extra": {
+		"name": "Stack",
+		"handle": "stack",
+		"class": "SomehowDigital\\Craft\\Stack\\Stack",
+		"branch-alias": {
+			"dev-main": "1.x-dev"
+		}
+	}
+}
