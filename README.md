@@ -83,11 +83,11 @@ The template will be resolved by the order of the configured namespaces and thei
 
 ### Static Resolution
 
-By using `@craft` as prefix, a namespaced template can be specified.
+By using `@mysite` as prefix, a namespaced template can be specified.
 If the template does not exist, Craft will throw a `TemplateNotFound` exception.
-The namespace prefix comes from the `handle` value defined in the config file.
+The namespace prefix will be evaluated via the `handle` value defined in the config file.
 
 ```twig
-{# resolves to `templates/sites/craft/header.twig` or errors #}
-{% include '@craft/header.twig' %}
+{# resolves to `templates/sites/mysite/header.twig` or errors #}
+{% include '@mysite/header.twig' %}
 ```
