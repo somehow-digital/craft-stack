@@ -77,7 +77,7 @@ The template will be resolved by the order of the configured namespaces and thei
 4. If it doesn't exist, Craft will throw the default `TemplateNotFound` exception.
 
 ```twig
-{# resolves to `templates/sites/craft/header.twig` or `templates/groups/craft/header.twig` or `templates/_global/header.twig` or errors #}
+{# resolves to `templates/sites/craft/header.twig` or `templates/groups/craft/header.twig` or `templates/_global/header.twig` #}
 {% include 'header.twig' %}
 ```
 
@@ -88,11 +88,11 @@ If the template does not exist, Craft will throw a `TemplateNotFound` exception.
 The namespace prefix will be evaluated via the `handle` value defined in the config file.
 
 ```twig
-{# resolves to `templates/sites/mysite/header.twig` or errors #}
+{# resolves to `templates/sites/mysite/header.twig` #}
 {% include '@mysite/header.twig' %}
 ```
 
 ```twig
-{# resolves to `templates/_global/header.twig` or errors #}
+{# resolves to `templates/_global/header.twig` #}
 {% include '@global/header.twig' %}
 ```
