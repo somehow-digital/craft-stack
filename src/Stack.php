@@ -17,7 +17,9 @@ class Stack extends Plugin
 	{
 		parent::init();
 
-		$this->registerSiteTemplateRoots();
+		if (count($this->getSettings()->namespaces) > 0) {
+			$this->registerSiteTemplateRoots();
+		}
 	}
 
 	protected function createSettingsModel(): ?Model
@@ -39,14 +41,17 @@ class Stack extends Plugin
 
 				if ($site && $group) {
 					foreach ($this->getSettings()->namespaces as $namespace) {
-						$name = $view->renderObjectTemplate($namespace['handle'], $site, ['group' => $group]);
-						$path = $view->renderObjectTemplate($namespace['path'], $site, ['group' => $group]);
+						$name = $view->renderObjectTemplate($namespace['handle'] ?? '', $site, ['group' => $group]);
+						$path = $view->renderObjectTemplate($namespace['path'] ?? '', $site, ['group' => $group]);
 
-						if ($name && $path) {
-							$name = '@' . trim($name);
+						if ($path) {
+							$name = $name ? '@' . trim($name) : '';
 							$path = FileHelper::normalizePath($view->getTemplatesPath() . DIRECTORY_SEPARATOR . $path);
 
-							$event->roots[$name][] = $path;
+							if ($name) {
+								$event->roots[$name][] = $path;
+							}
+
 							$event->roots[''][] = $path;
 						}
 					}

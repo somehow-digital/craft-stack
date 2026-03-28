@@ -33,6 +33,7 @@ Namespaces can be configured via a `config/stack.php` config file.
 * By default no namespaces are configured and the plugin will not resolve templates.
 * The order of configured namespaces matters when template files are resolved via `Dynamic Resolution`.
 * `handle` and `path` values are object templates, where `Site` and `SiteGroup` objects are available to use.
+* `handle` values are optional but are needed if `Static Resolution` is wanted to be used.
 
 **config/stack.php**
 ```php
