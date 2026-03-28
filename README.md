@@ -49,7 +49,7 @@ _default_: `[]`
 <?php
 
 return [
-  // 'prefix' => '@',
+	// 'prefix' => '@',
 	'namespaces' => [
 		[
 			'handle' => '{handle|lower}',
