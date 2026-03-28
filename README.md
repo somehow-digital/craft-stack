@@ -1,3 +1,5 @@
+<img src="src/icon.svg" alt="Stack Logo" width="96" height="96"/>
+
 # `Stack` for Craft CMS
 > Brings a namespace system to better organize and load [Twig](https://twig.symfony.com/) templates in [Craft CMS](https://craftcms.com/).
 
@@ -120,3 +122,7 @@ The namespace prefix will be evaluated via the `handle` value defined in the con
 {# resolves to `templates/_global/header.twig` #}
 {% include '@global/header.twig' %}
 ```
+
+---
+
+> [somehow.digital](https://somehow.digital)
