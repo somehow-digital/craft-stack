@@ -43,6 +43,7 @@ _default_: `[]`
 * Order of namespaces matters when template file paths are resolved via `Dynamic Resolution`.
 * `handle` and `path` values can use object templates, where `Site` (`site`) and `SiteGroup` (`group`) objects are available to use.
 * `handle` values are optional but are needed if `Static Resolution` is to be used.
+* `context` values are optional and are used to pass variables to be used in object templates.
 
 **config/stack.php**
 ```php
@@ -61,7 +62,10 @@ return [
 		],
 		[
 			'handle' => 'global',
-			'path' => '_global',
+			'path' => '_global/{env}',
+			'context' => [
+				'env' => App::devMode() ? 'dev' : '',
+			],
 		],
 	],
 ];
