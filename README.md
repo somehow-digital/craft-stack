@@ -65,7 +65,7 @@ return [
 
 ### Dynamic Resolution
 
-The template will be resolved by the order of the configured namespaces and their paths.
+The template file will be resolved by the order of the configured namespaces and their paths.
 
 1. If the current site's handle is `mysite` and the current site-group's name is `mygroup`,
    the first resolved template path is `templates/sites/mysite/header.twig`. If this
@@ -83,9 +83,18 @@ The template will be resolved by the order of the configured namespaces and thei
 
 ### Static Resolution
 
-By using `@mysite` as prefix, a namespaced template can be specified.
+Prefixing a template file path with a namespace handle, a template file for a specific namespace can be used.
 If the template does not exist, Craft will throw a `TemplateNotFound` exception.
 The namespace prefix will be evaluated via the `handle` value defined in the config file.
+
+1. If the current site's handle is `mysite`, the resolved template path is `templates/sites/mysite/header.twig`.
+   If this template file exists, it will be used.
+2. If it doesn't exist, Craft will throw the default `TemplateNotFound` exception.
+
+```twig
+{# resolves to `templates/groups/mygroup/header.twig` #}
+{% include '@mygroup/header.twig' %}
+```
 
 ```twig
 {# resolves to `templates/sites/mysite/header.twig` #}
