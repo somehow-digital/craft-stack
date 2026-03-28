@@ -31,25 +31,25 @@ composer require somehow-digital/craft-stack
 
 Settings can be configured via a `config/stack.php` config file.
 
-> `prefix` - defines the handle prefix for namespaced template file paths.
+> **`prefix`** - handle prefix for namespaced template file paths.
 
 _default_: `@`
 
-> `namespaces` - defines the namespaces to be used for template file path resolution.
+> **`namespaces`** - list of namespaces for template file path resolution.
 
 _default_: `[]`
 
-* By default no namespaces are configured and the plugin will not resolve templates.
-* The order of configured namespaces matters when template files are resolved via `Dynamic Resolution`.
-* `handle` and `path` values are object templates, where `Site` and `SiteGroup` objects are available to use.
-* `handle` values are optional but are needed if `Static Resolution` is wanted to be used.
+* By default, no namespaces are configured, and the plugin will not resolve templates.
+* Order of namespaces matters when template file paths are resolved via `Dynamic Resolution`.
+* `handle` and `path` values can use object templates, where `Site` and `SiteGroup` objects are available to use.
+* `handle` values are optional but are needed if `Static Resolution` is to be used.
 
 **config/stack.php**
 ```php
 <?php
 
 return [
-  'prefix' => '@',
+  // 'prefix' => '@',
 	'namespaces' => [
 		[
 			'handle' => '{handle|lower}',
