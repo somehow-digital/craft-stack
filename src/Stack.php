@@ -45,7 +45,7 @@ class Stack extends Plugin
 						$path = $view->renderObjectTemplate($namespace['path'] ?? '', $site, ['group' => $group]);
 
 						if ($path) {
-							$name = $name ? '@' . trim($name) : '';
+							$name = $name ? $this->getSettings()->prefix . trim($name) : '';
 							$path = FileHelper::normalizePath($view->getTemplatesPath() . DIRECTORY_SEPARATOR . $path);
 
 							if ($name) {

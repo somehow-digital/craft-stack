@@ -29,7 +29,16 @@ composer require somehow-digital/craft-stack
 
 ## Configuration
 
-Namespaces can be configured via a `config/stack.php` config file.
+Settings can be configured via a `config/stack.php` config file.
+
+> `prefix` - defines the handle prefix for namespaced template file paths.
+
+_default_: `@`
+
+> `namespaces` - defines the namespaces to be used for template file path resolution.
+
+_default_: `[]`
+
 * By default no namespaces are configured and the plugin will not resolve templates.
 * The order of configured namespaces matters when template files are resolved via `Dynamic Resolution`.
 * `handle` and `path` values are object templates, where `Site` and `SiteGroup` objects are available to use.
@@ -40,6 +49,7 @@ Namespaces can be configured via a `config/stack.php` config file.
 <?php
 
 return [
+  'prefix' => '@',
 	'namespaces' => [
 		[
 			'handle' => '{handle|lower}',
