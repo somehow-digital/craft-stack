@@ -41,7 +41,7 @@ _default_: `[]`
 
 * By default, no namespaces are configured, and the plugin will not resolve templates.
 * Order of namespaces matters when template file paths are resolved via `Dynamic Resolution`.
-* `handle` and `path` values can use object templates, where `Site` and `SiteGroup` objects are available to use.
+* `handle` and `path` values can use object templates, where `Site` (`site`) and `SiteGroup` (`group`) objects are available to use.
 * `handle` values are optional but are needed if `Static Resolution` is to be used.
 
 **config/stack.php**
@@ -52,8 +52,8 @@ return [
 	// 'prefix' => '@',
 	'namespaces' => [
 		[
-			'handle' => '{handle|lower}',
-			'path' => 'sites/{handle|lower}',
+			'handle' => '{site.handle|lower}',
+			'path' => 'sites/{site.handle|lower}',
 		],
 		[
 			'handle' => '{group.name|lower}',
