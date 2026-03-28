@@ -125,4 +125,4 @@ The namespace prefix will be evaluated via the `handle` value defined in the con
 
 ---
 
-> [somehow.digital](https://somehow.digital)
+> [somehow digital.](https://somehow.digital)
