@@ -7,5 +7,5 @@ use craft\base\Event;
 class NamespaceContextEvent extends Event
 {
 	public array $namespace;
-    public array $context = [];
+	public array $context = [];
 }

@@ -23,19 +23,40 @@
 		"sort-packages": true,
 		"allow-plugins": {
 			"craftcms/plugin-installer": true,
+			"pestphp/pest-plugin": true,
 			"yiisoft/yii2-composer": true
 		}
+	},
+	"scripts": {
+		"phpstan": "phpstan analyse --memory-limit=1G",
+		"ecs": "ecs check",
+		"ecs-fix": "ecs check --fix",
+		"test": "pest",
+		"check": [
+			"@ecs",
+			"@phpstan",
+			"@test"
+		]
 	},
 	"require": {
 		"php": "^8.2",
 		"craftcms/cms": "^5.8.0"
 	},
 	"require-dev": {
-		"roave/security-advisories": "dev-latest"
+		"craftcms/phpstan": "dev-main",
+		"pestphp/pest": "^3.0 || ^4.0",
+		"phpstan/phpstan": "^2.1",
+		"roave/security-advisories": "dev-latest",
+		"symplify/easy-coding-standard": "^13.0"
 	},
 	"autoload": {
 		"psr-4": {
 			"SomehowDigital\\Craft\\Stack\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"SomehowDigital\\Craft\\Stack\\Tests\\": "tests/"
 		}
 	},
 	"extra": {
