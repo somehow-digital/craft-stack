@@ -3,6 +3,7 @@
 namespace SomehowDigital\Craft\Stack\models;
 
 use craft\base\Model;
+use craft\validators\ArrayValidator;
 
 class Settings extends Model
 {
@@ -13,7 +14,7 @@ class Settings extends Model
 	{
 		return [
 			['prefix', 'string'],
-			['namespaces', 'array'],
+			['namespaces', ArrayValidator::class],
 		];
 	}
 }

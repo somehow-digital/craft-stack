@@ -12,9 +12,12 @@ use craft\web\View;
 use SomehowDigital\Craft\Stack\events\NamespaceContextEvent;
 use SomehowDigital\Craft\Stack\models\Settings;
 
+/**
+ * @method Settings getSettings()
+ */
 class Stack extends Plugin
 {
-	const EVENT_NAMESPACE_CONTEXT = 'namespaceContext';
+	public const EVENT_NAMESPACE_CONTEXT = 'namespaceContext';
 
 	public function init(): void
 	{
@@ -35,7 +38,7 @@ class Stack extends Plugin
 		Event::on(
 			View::class,
 			View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-			function(RegisterTemplateRootsEvent $event) {
+			function (RegisterTemplateRootsEvent $event) {
 				/** @var View $view */
 				$view = $event->sender;
 
