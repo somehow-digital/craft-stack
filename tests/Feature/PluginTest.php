@@ -109,3 +109,13 @@ it('lets the context be changed by an event', function (): void {
 
     expect(templateRoots())->toHaveKey('@theme', [templatePath('_acme')]);
 });
+
+it('trims the handle of a namespace', function (): void {
+    $this->createApp(['namespaces' => [['handle' => ' theme ', 'path' => '_theme']]]);
+
+    expect(templateRoots())->toHaveKey('@theme');
+});
+
+it('initializes as a Yii module', function (): void {
+    expect(Stack::getInstance()?->controllerNamespace)->toBe('SomehowDigital\Craft\Stack\controllers');
+});

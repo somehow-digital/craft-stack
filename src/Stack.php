@@ -25,7 +25,7 @@ class Stack extends Plugin
     {
         parent::init();
 
-        if (count($this->getSettings()->namespaces) > 0) {
+        if ($this->getSettings()->namespaces !== []) {
             $this->registerSiteTemplateRoots();
         }
     }
