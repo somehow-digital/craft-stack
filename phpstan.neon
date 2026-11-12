@@ -1,10 +1,55 @@
 includes:
+	- vendor/phpstan/phpstan/conf/bleedingEdge.neon
 	- vendor/craftcms/phpstan/phpstan.neon
+	- vendor/pestphp/pest/extension.neon
+	- vendor/pestphp/pest/phpstan-pest-extension.neon
+	- vendor/phpstan/phpstan-strict-rules/rules.neon
+	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
+	- vendor/shipmonk/phpstan-rules/rules.neon
+	- vendor/tomasvotruba/cognitive-complexity/config/extension.neon
+	- vendor/phpat/phpat/extension.neon
+
+parametersSchema:
+	architecture: structure([
+		namespace: string()
+		tests: string()
+	])
 
 parameters:
-	level: 5
+	phpat:
+		show_rule_names: true
+	architecture:
+		namespace: SomehowDigital\Craft\Stack
+		tests: SomehowDigital\Craft\Stack\Tests
+
+	level: 10
+	# The supported PHP range, not just the running version.
+	phpVersion:
+		min: 80200
+		max: 80599
+	reportUnmatchedIgnoredErrors: true
+	checkUninitializedProperties: true
+	checkTooWideReturnTypesInProtectedAndPublicMethods: true
+	ignoreErrors:
+		# Yii sets properties through the config and event handlers.
+		-
+			message: '#^Public property `\w+` not marked as readonly\.#'
+			path: src
+		# Pest marks the classes behind its functions as internal.
+		-
+			identifier: method.internalClass
+			message: '#internal class Pest\\#'
+			path: tests
+		-
+			identifier: classConstant.internalClass
+			message: '#internal class Pest\\Mixins\\Expectation#'
+			path: tests/PHPStan/PestExpectationReturnTypeExtension.php
+		# Yii's magic methods can throw, which Craft's API doesn't declare.
+		-
+			identifier: shipmonk.checkedExceptionInCallable
 	paths:
 		- src
+		- tests
 	earlyTerminatingMethodCalls:
 		Craft:
 			- dd
@@ -12,3 +57,40 @@ parameters:
 			- end
 		yii\base\ErrorHandler:
 			- convertExceptionToError
+	bootstrapFiles:
+		- tests/PHPStan/bootstrap.php
+
+services:
+	-
+		class: SomehowDigital\Craft\Stack\Tests\PHPStan\ArchitectureRules
+		tags:
+			- phpat.test
+	-
+		class: SomehowDigital\Craft\Stack\Tests\PHPStan\PestClosureThisExtension
+		tags:
+			- phpstan.functionParameterClosureThisExtension
+	-
+		class: SomehowDigital\Craft\Stack\Tests\PHPStan\PestExpectationReturnTypeExtension
+		arguments: [Pest\Expectation]
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
+		class: SomehowDigital\Craft\Stack\Tests\PHPStan\PestExpectationReturnTypeExtension
+		arguments: [Pest\Expectations\OppositeExpectation]
+		tags:
+			- phpstan.broker.dynamicMethodReturnTypeExtension
+	-
+		class: SomehowDigital\Craft\Stack\Tests\PHPStan\StaticStateRule
+		arguments:
+			namespace: %architecture.namespace%
+			excluded: [%architecture.tests%]
+		tags:
+			- phpstan.rules.rule
+	-
+		class: SomehowDigital\Craft\Stack\Tests\PHPStan\ServiceLocatorRule
+		arguments:
+			namespace: %architecture.namespace%
+			# The domain, which gets its dependencies passed in.
+			layers: [events, models]
+		tags:
+			- phpstan.rules.rule

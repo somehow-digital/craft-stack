@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SomehowDigital\Craft\Stack;
 
 use Craft;
@@ -17,67 +19,83 @@ use SomehowDigital\Craft\Stack\models\Settings;
  */
 class Stack extends Plugin
 {
-	public const EVENT_NAMESPACE_CONTEXT = 'namespaceContext';
+    public const EVENT_NAMESPACE_CONTEXT = 'namespaceContext';
 
-	public function init(): void
-	{
-		parent::init();
+    public function init(): void
+    {
+        parent::init();
 
-		if (count($this->getSettings()->namespaces) > 0) {
-			$this->registerSiteTemplateRoots();
-		}
-	}
+        if (count($this->getSettings()->namespaces) > 0) {
+            $this->registerSiteTemplateRoots();
+        }
+    }
 
-	protected function createSettingsModel(): ?Model
-	{
-		return new Settings();
-	}
+    protected function createSettingsModel(): Model
+    {
+        return new Settings();
+    }
 
-	private function registerSiteTemplateRoots(): void
-	{
-		Event::on(
-			View::class,
-			View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-			function (RegisterTemplateRootsEvent $event) {
-				/** @var View $view */
-				$view = $event->sender;
+    private function registerSiteTemplateRoots(): void
+    {
+        Event::on(
+            View::class,
+            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
+            function (RegisterTemplateRootsEvent $event): void {
+                /** @var View $view */
+                $view = $event->sender;
 
-				foreach ($this->getSettings()->namespaces as $namespace) {
-					$context = $this->getNamespaceContext($namespace);
+                foreach ($this->getSettings()->namespaces as $namespace) {
+                    $this->registerNamespace($view, $event, $namespace);
+                }
+            }
+        );
+    }
 
-					$name = $view->renderObjectTemplate($namespace['handle'] ?? '', $context);
-					$path = $view->renderObjectTemplate($namespace['path'] ?? '', $context);
+    /**
+     * @param array{handle?: string, path?: string, context?: array<string, mixed>} $namespace
+     */
+    private function registerNamespace(View $view, RegisterTemplateRootsEvent $event, array $namespace): void
+    {
+        $context = $this->getNamespaceContext($namespace);
 
-					if ($path) {
-						$name = $name ? $this->getSettings()->prefix . trim($name) : '';
-						$path = FileHelper::normalizePath($view->getTemplatesPath() . DIRECTORY_SEPARATOR . $path);
+        $path = $view->renderObjectTemplate($namespace['path'] ?? '', $context);
 
-						if ($name) {
-							$event->roots[$name][] = $path;
-						}
+        if ($path === '') {
+            return;
+        }
 
-						$event->roots[''][] = $path;
-					}
-				}
-			}
-		);
-	}
+        $path = FileHelper::normalizePath($view->getTemplatesPath() . DIRECTORY_SEPARATOR . $path);
+        /** @var array<string, list<string>> $roots */
+        $roots = $event->roots;
+        $name = trim($view->renderObjectTemplate($namespace['handle'] ?? '', $context));
 
-	private function getNamespaceContext(array $namespace): array
-	{
-		$site = Craft::$app->sites->getCurrentSite();
-		$group = Craft::$app->sites->getGroupById($site->groupId);
+        if ($name !== '') {
+            $roots[$this->getSettings()->prefix . $name][] = $path;
+        }
 
-		$event = new NamespaceContextEvent();
-		$event->namespace = $namespace;
-		$event->context = [
-			'site' => $site,
-			'group' => $group,
-			...$namespace['context'] ?? [],
-		];
+        $roots[''][] = $path;
+        $event->roots = $roots;
+    }
 
-		$this->trigger(static::EVENT_NAMESPACE_CONTEXT, $event);
+    /**
+     * @param array{handle?: string, path?: string, context?: array<string, mixed>} $namespace
+     * @return array<string, mixed>
+     */
+    private function getNamespaceContext(array $namespace): array
+    {
+        $site = Craft::$app->getSites()->getCurrentSite();
+        $group = $site->groupId === null ? null : Craft::$app->getSites()->getGroupById($site->groupId);
 
-		return $event->context;
-	}
+        $event = new NamespaceContextEvent();
+        $event->namespace = $namespace;
+        $event->context = [
+            'site' => $site,
+            'group' => $group,
+            ...$namespace['context'] ?? [],
+        ];
+
+        $this->trigger(self::EVENT_NAMESPACE_CONTEXT, $event);
+
+        return $event->context;
+    }
 }

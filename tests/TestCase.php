@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SomehowDigital\Craft\Stack\Tests;
 
 use Craft;
@@ -19,106 +21,109 @@ use yii\di\Container;
  */
 abstract class TestCase extends BaseTestCase
 {
-	/** @var string[] names of the environment variables set by the test */
-	private array $variables = [];
+    /** @var string[] names of the environment variables set by the test */
+    private array $variables = [];
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-		$this->createApp();
-	}
+        $this->createApp();
+    }
 
-	protected function tearDown(): void
-	{
-		foreach ($this->variables as $name) {
-			unset($_SERVER[$name]);
-		}
+    protected function tearDown(): void
+    {
+        foreach ($this->variables as $name) {
+            unset($_SERVER[$name]);
+        }
 
-		Event::offAll();
-		Craft::$app = null;
-		Craft::$container = new Container();
+        Event::offAll();
+        // @phpstan-ignore assign.propertyType (Yii types the app as always set)
+        Craft::$app = null;
+        Craft::$container = new Container();
 
-		parent::tearDown();
-	}
+        parent::tearDown();
+    }
 
-	/**
-	 * Boots Craft, which the plugin reads its settings and the kind of request from when it initializes.
-	 *
-	 * @param array<string,mixed> $settings
-	 */
-	protected function createApp(array $settings = [], bool $isCpRequest = true): Application
-	{
-		Event::offAll();
-		Craft::$container = new Container();
+    /**
+     * Boots Craft, which the plugin reads its settings and the kind of request from when it initializes.
+     *
+     * @param array<string,mixed> $settings
+     */
+    protected function createApp(array $settings = [], bool $isCpRequest = true): Application
+    {
+        Event::offAll();
+        Craft::$container = new Container();
 
-		$src = CRAFT_VENDOR_PATH . '/craftcms/cms/src';
+        $src = CRAFT_VENDOR_PATH . '/craftcms/cms/src';
 
-		$configService = new Config();
-		$configService->appType = 'web';
-		$configService->env = 'test';
-		$configService->configDir = Craft::getAlias('@config');
-		$configService->appDefaultsDir = "$src/config/defaults";
+        $configService = new Config();
+        $configService->appType = 'web';
+        $configService->env = 'test';
+        $configService->configDir = Craft::getAlias('@config');
+        $configService->appDefaultsDir = "{$src}/config/defaults";
 
-		$config = ArrayHelper::merge(
-			['vendorPath' => CRAFT_VENDOR_PATH, 'env' => 'test', 'components' => ['config' => $configService]],
-			require "$src/config/app.php",
-			require "$src/config/app.web.php",
-			[
-				'isInstalled' => false,
-				'components' => [
-					'log' => ['targets' => []],
-					'cache' => ['class' => ArrayCache::class],
-					'plugins' => ['class' => Plugins::class],
-					'sites' => ['class' => Sites::class],
-				],
-			],
-		);
+        $config = ArrayHelper::merge(
+            ['vendorPath' => CRAFT_VENDOR_PATH, 'env' => 'test', 'components' => ['config' => $configService]],
+            require "{$src}/config/app.php",
+            require "{$src}/config/app.web.php",
+            [
+                'isInstalled' => false,
+                'components' => [
+                    'log' => ['targets' => []],
+                    'cache' => ['class' => ArrayCache::class],
+                    'plugins' => ['class' => Plugins::class],
+                    'sites' => ['class' => Sites::class],
+                ],
+            ],
+        );
 
-		/** @var Application $app */
-		$app = Craft::createObject($config);
+        /** @var Application $app */
+        // @phpstan-ignore argument.type, argument.templateType (Craft's stub only knows the `class` key)
+        $app = Craft::createObject($config);
 
-		// Tests run on the command line, which requests take for console requests.
-		$app->getRequest()->setIsConsoleRequest(false);
-		$app->getRequest()->setIsCpRequest($isCpRequest);
+        // Tests run on the command line, which requests take for console requests.
+        $app->getRequest()->setIsConsoleRequest(false);
+        $app->getRequest()->setIsCpRequest($isCpRequest);
 
-		$this->createPlugin($settings);
+        $this->createPlugin($settings);
 
-		return $app;
-	}
+        return $app;
+    }
 
-	/**
-	 * @param array<string,mixed> $settings
-	 */
-	protected function createPlugin(array $settings = []): Stack
-	{
-		/** @var Stack $plugin */
-		$plugin = Craft::createObject([
-			'class' => Stack::class,
-			'basePath' => dirname(__DIR__) . '/src',
-			'settings' => $settings,
-		], ['stack', Craft::$app]);
+    /**
+     * @param array<string,mixed> $settings
+     */
+    protected function createPlugin(array $settings = []): Stack
+    {
+        /** @var Stack $plugin */
+        // @phpstan-ignore argument.type (Craft's stub only knows the `class` key)
+        $plugin = Craft::createObject([
+            'class' => Stack::class,
+            'basePath' => dirname(__DIR__) . '/src',
+            'settings' => $settings,
+        ], ['stack', Craft::$app]);
 
-		Stack::setInstance($plugin);
-		Craft::$app->setModule('stack', $plugin);
+        Stack::setInstance($plugin);
+        Craft::$app->setModule('stack', $plugin);
 
-		/** @var Plugins $plugins */
-		$plugins = Craft::$app->getPlugins();
-		$plugins->install($plugin);
+        /** @var Plugins $plugins */
+        $plugins = Craft::$app->getPlugins();
+        $plugins->install($plugin);
 
-		return $plugin;
-	}
+        return $plugin;
+    }
 
-	/**
-	 * Sets environment variables, which are removed again after the test.
-	 *
-	 * @param array<string,string> $variables
-	 */
-	protected function env(array $variables): void
-	{
-		foreach ($variables as $name => $value) {
-			$_SERVER[$name] = $value;
-			$this->variables[] = $name;
-		}
-	}
+    /**
+     * Sets environment variables, which are removed again after the test.
+     *
+     * @param array<string,string> $variables
+     */
+    protected function env(array $variables): void
+    {
+        foreach ($variables as $name => $value) {
+            $_SERVER[$name] = $value;
+            $this->variables[] = $name;
+        }
+    }
 }
