@@ -1,0 +1,34 @@
+---
+title: Template namespaces for Craft CMS
+description: Organize and load Twig templates with namespaces in Craft CMS.
+template: splash
+hero:
+  title: Stack for Craft CMS
+  tagline: Organize your Twig templates with namespaces, resolved per site, group or environment.
+  actions:
+    - text: Get started
+      link: /guide/installation/
+      icon: right-arrow
+    - text: Browse the features
+      link: /features/dynamic-resolution/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+```bash
+composer require somehow-digital/craft-stack
+php craft plugin/install stack
+```
+
+<CardGrid stagger>
+	<Card title="Dynamic resolution" icon="document">
+		Include a template by its plain path and let the first matching namespace win.
+	</Card>
+	<Card title="Static resolution" icon="right-arrow">
+		Prefix a path with a namespace handle to load a template from one specific namespace.
+	</Card>
+	<Card title="Object templates" icon="setting">
+		Build handles and paths from the current site, site group or your own context.
+	</Card>
+</CardGrid>

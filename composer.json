@@ -22,7 +22,7 @@
 		"email": "support@somehow.digital",
 		"issues": "https://github.com/somehow-digital/craft-stack/issues",
 		"source": "https://github.com/somehow-digital/craft-stack",
-		"docs": "https://github.com/somehow-digital/craft-stack"
+		"docs": "https://craft-stack.somehow-digital.dev"
 	},
 	"require": {
 		"php": "^8.2",
