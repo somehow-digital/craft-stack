@@ -111,11 +111,13 @@ it('lets the context be changed by an event', function (): void {
 });
 
 it('trims the handle of a namespace', function (): void {
-    $this->createApp(['namespaces' => [['handle' => ' theme ', 'path' => '_theme']]]);
+    $this->createApp(['namespaces' => [['handle' => ' {brand} ', 'path' => '_theme', 'context' => ['brand' => 'acme']]]]);
 
-    expect(templateRoots())->toHaveKey('@theme');
+    expect(templateRoots())->toHaveKey('@acme');
 });
 
-it('initializes as a Yii module', function (): void {
-    expect(Stack::getInstance()?->controllerNamespace)->toBe('SomehowDigital\Craft\Stack\controllers');
+it('runs the initialization of the Craft plugin', function (): void {
+    $plugin = new Stack('stack', Craft::$app, ['basePath' => dirname(__DIR__, 2) . '/src', 'hasCpSettings' => true]);
+
+    expect($plugin->hasReadOnlyCpSettings)->toBeTrue();
 });

@@ -67,7 +67,7 @@ class Stack extends Plugin
         $path = FileHelper::normalizePath($view->getTemplatesPath() . DIRECTORY_SEPARATOR . $path);
         /** @var array<string, list<string>> $roots */
         $roots = $event->roots;
-        $name = trim($view->renderObjectTemplate($namespace['handle'] ?? '', $context));
+        $name = $view->renderObjectTemplate($namespace['handle'] ?? '', $context);
 
         if ($name !== '') {
             $roots[$this->getSettings()->prefix . $name][] = $path;
