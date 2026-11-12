@@ -23,15 +23,15 @@ $loader = ClassLoader::getRegisteredLoaders()[$vendorPath];
 // Craft and Yii trigger deprecations on newer PHP versions when their classes are compiled, which aren't the plugin's to fix,
 // so they are left out while their classes are loaded.
 spl_autoload_register(function (string $class) use ($loader): void {
-    if (str_starts_with($class, 'craft\\') || str_starts_with($class, 'yii\\')) {
-        set_error_handler(fn(): true => true, E_DEPRECATED);
+	if (str_starts_with($class, 'craft\\') || str_starts_with($class, 'yii\\')) {
+		set_error_handler(fn(): true => true, E_DEPRECATED);
 
-        try {
-            $loader->loadClass($class);
-        } finally {
-            restore_error_handler();
-        }
-    }
+		try {
+			$loader->loadClass($class);
+		} finally {
+			restore_error_handler();
+		}
+	}
 }, true, true);
 
 // Craft replaces the Yii class with its own.
@@ -41,9 +41,9 @@ require_once $vendorPath . '/craftcms/cms/src/Craft.php';
 $root = sys_get_temp_dir() . '/craft-stack-tests-' . getmypid();
 
 foreach (['config', 'storage/runtime', 'storage/logs', 'templates', 'translations', 'web/cpresources'] as $path) {
-    if (!is_dir("{$root}/{$path}")) {
-        mkdir("{$root}/{$path}", 0777, true);
-    }
+	if (!is_dir("{$root}/{$path}")) {
+		mkdir("{$root}/{$path}", 0777, true);
+	}
 }
 
 register_shutdown_function(fn() => FileHelper::removeDirectory($root));

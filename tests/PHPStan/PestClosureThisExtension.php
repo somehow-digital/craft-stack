@@ -18,15 +18,15 @@ use SomehowDigital\Craft\Stack\Tests\TestCase;
  */
 final class PestClosureThisExtension implements FunctionParameterClosureThisExtension
 {
-    private const FUNCTIONS = ['it', 'test', 'beforeEach', 'afterEach'];
+	private const FUNCTIONS = ['it', 'test', 'beforeEach', 'afterEach'];
 
-    public function isFunctionSupported(FunctionReflection $functionReflection, ParameterReflection $parameter): bool
-    {
-        return in_array($functionReflection->getName(), self::FUNCTIONS, true) && $parameter->getName() === 'closure';
-    }
+	public function isFunctionSupported(FunctionReflection $functionReflection, ParameterReflection $parameter): bool
+	{
+		return in_array($functionReflection->getName(), self::FUNCTIONS, true) && $parameter->getName() === 'closure';
+	}
 
-    public function getClosureThisTypeFromFunctionCall(FunctionReflection $functionReflection, FuncCall $functionCall, ParameterReflection $parameter, Scope $scope): Type
-    {
-        return new ObjectType(TestCase::class);
-    }
+	public function getClosureThisTypeFromFunctionCall(FunctionReflection $functionReflection, FuncCall $functionCall, ParameterReflection $parameter, Scope $scope): Type
+	{
+		return new ObjectType(TestCase::class);
+	}
 }

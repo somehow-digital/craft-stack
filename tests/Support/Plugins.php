@@ -12,26 +12,26 @@ use craft\services\Plugins as PluginsService;
  */
 class Plugins extends PluginsService
 {
-    /** @var array<string,PluginInterface> */
-    private array $installed = [];
+	/** @var array<string,PluginInterface> */
+	private array $installed = [];
 
-    public function install(PluginInterface $plugin): void
-    {
-        $this->installed[$plugin->id] = $plugin;
-    }
+	public function install(PluginInterface $plugin): void
+	{
+		$this->installed[$plugin->id] = $plugin;
+	}
 
-    public function getPlugin(string $handle): ?PluginInterface
-    {
-        return $this->installed[$handle] ?? null;
-    }
+	public function getPlugin(string $handle): ?PluginInterface
+	{
+		return $this->installed[$handle] ?? null;
+	}
 
-    public function isPluginInstalled(string $handle): bool
-    {
-        return isset($this->installed[$handle]);
-    }
+	public function isPluginInstalled(string $handle): bool
+	{
+		return isset($this->installed[$handle]);
+	}
 
-    public function isPluginEnabled(string $handle): bool
-    {
-        return isset($this->installed[$handle]);
-    }
+	public function isPluginEnabled(string $handle): bool
+	{
+		return isset($this->installed[$handle]);
+	}
 }

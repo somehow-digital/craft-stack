@@ -8,8 +8,8 @@ use craft\base\Model;
 
 final class Settings extends Model
 {
-    public string $prefix = '@';
+	public string $prefix = '@';
 
-    /** @var list<array{handle?: string, path?: string, context?: array<string, mixed>}> */
-    public array $namespaces = [];
+	/** @var list<array{handle?: string, path?: string, context?: array<string, mixed>}> */
+	public array $namespaces = [];
 }
