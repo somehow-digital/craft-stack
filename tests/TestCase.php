@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SomehowDigital\Craft\Stack\Tests;
 
 use Craft;
@@ -36,6 +38,7 @@ abstract class TestCase extends BaseTestCase
 		}
 
 		Event::offAll();
+		// @phpstan-ignore assign.propertyType (Yii types the app as always set)
 		Craft::$app = null;
 		Craft::$container = new Container();
 
@@ -58,12 +61,12 @@ abstract class TestCase extends BaseTestCase
 		$configService->appType = 'web';
 		$configService->env = 'test';
 		$configService->configDir = Craft::getAlias('@config');
-		$configService->appDefaultsDir = "$src/config/defaults";
+		$configService->appDefaultsDir = "{$src}/config/defaults";
 
 		$config = ArrayHelper::merge(
 			['vendorPath' => CRAFT_VENDOR_PATH, 'env' => 'test', 'components' => ['config' => $configService]],
-			require "$src/config/app.php",
-			require "$src/config/app.web.php",
+			require "{$src}/config/app.php",
+			require "{$src}/config/app.web.php",
 			[
 				'isInstalled' => false,
 				'components' => [
@@ -76,6 +79,7 @@ abstract class TestCase extends BaseTestCase
 		);
 
 		/** @var Application $app */
+		// @phpstan-ignore argument.type, argument.templateType (Craft's stub only knows the `class` key)
 		$app = Craft::createObject($config);
 
 		// Tests run on the command line, which requests take for console requests.
@@ -93,6 +97,7 @@ abstract class TestCase extends BaseTestCase
 	protected function createPlugin(array $settings = []): Stack
 	{
 		/** @var Stack $plugin */
+		// @phpstan-ignore argument.type (Craft's stub only knows the `class` key)
 		$plugin = Craft::createObject([
 			'class' => Stack::class,
 			'basePath' => dirname(__DIR__) . '/src',

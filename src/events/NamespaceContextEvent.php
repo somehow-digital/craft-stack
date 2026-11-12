@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SomehowDigital\Craft\Stack\events;
 
 use craft\base\Event;
 
-class NamespaceContextEvent extends Event
+final class NamespaceContextEvent extends Event
 {
-	public array $namespace;
+	/** @var array{handle?: string, path?: string, context?: array<string, mixed>} */
+	public array $namespace = [];
+
+	/** @var array<string, mixed> */
 	public array $context = [];
 }

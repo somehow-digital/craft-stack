@@ -1,0 +1,70 @@
+# The plugin's layers and which of them each may depend on.
+#
+# A layer is a plugin namespace (as Craft's generator lays them out). Unlisted framework code is open to every layer.
+# `deptrac debug:unassigned` fails for plugin classes outside any layer. Class rules (base classes, naming) live in
+# tests/PHPStan/ArchitectureRules.php.
+#
+#   Plugin           the composition root, registering event handlers
+#   Domain
+#     Models         settings                                         models
+#     Events         events that the plugin triggers                  events
+
+parameters:
+  plugin: 'SomehowDigital\\Craft\\Stack'
+
+deptrac:
+  paths:
+    - ./src
+
+  analyser:
+    types:
+      - class
+      - class_superglobal
+      - function
+      - function_call
+      - function_superglobal
+      - use
+
+  layers:
+    - name: Plugin
+      collectors:
+        - type: classNameRegex
+          value: '#^%plugin%\\Stack$#'
+
+    - name: Models
+      collectors:
+        - type: classNameRegex
+          value: '#^%plugin%\\models\\#'
+
+    - name: Events
+      collectors:
+        - type: classNameRegex
+          value: '#^%plugin%\\events\\#'
+
+    # Not shipped, so no layer depends on them.
+    - name: Tests
+      collectors:
+        - type: classNameRegex
+          value: '#^%plugin%\\Tests\\#'
+
+    # Craft wraps these, so no layer reads them.
+    - name: Superglobals
+      collectors:
+        - type: superglobal
+          value:
+            - _COOKIE
+            - _ENV
+            - _FILES
+            - _GET
+            - _POST
+            - _REQUEST
+            - _SERVER
+            - _SESSION
+            - GLOBALS
+
+  ruleset:
+    Plugin: [Models, Events]
+
+    # The domain depends only on itself.
+    Models: ~
+    Events: ~

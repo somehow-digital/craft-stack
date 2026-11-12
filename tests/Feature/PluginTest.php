@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use craft\events\RegisterTemplateRootsEvent;
 use craft\helpers\FileHelper;
 use craft\web\View;
@@ -11,13 +13,14 @@ use yii\base\Event;
 /**
  * The template roots registered for the site.
  *
- * @return array<string,string[]>
+ * @return array<string, list<string>>
  */
 function templateRoots(): array
 {
 	$event = new RegisterTemplateRootsEvent();
 	Craft::$app->getView()->trigger(View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS, $event);
 
+	// @phpstan-ignore return.type (Craft leaves the roots untyped)
 	return $event->roots;
 }
 
@@ -29,15 +32,15 @@ function templatePath(string $path): string
 	return FileHelper::normalizePath(Craft::$app->getView()->getTemplatesPath() . DIRECTORY_SEPARATOR . $path);
 }
 
-it('has settings', function () {
-	expect(Stack::getInstance()->getSettings())->toBeInstanceOf(Settings::class);
+it('has settings', function (): void {
+	expect(Stack::getInstance()?->getSettings())->toBeInstanceOf(Settings::class);
 });
 
-it('registers no template roots without namespaces', function () {
+it('registers no template roots without namespaces', function (): void {
 	expect(templateRoots())->toBe([]);
 });
 
-it('registers a prefixed root and a global root for a namespace', function () {
+it('registers a prefixed root and a global root for a namespace', function (): void {
 	$this->createApp(['namespaces' => [['handle' => 'theme', 'path' => '_theme']]]);
 
 	expect(templateRoots())->toBe([
@@ -46,13 +49,13 @@ it('registers a prefixed root and a global root for a namespace', function () {
 	]);
 });
 
-it('uses the configured prefix', function () {
+it('uses the configured prefix', function (): void {
 	$this->createApp(['prefix' => '#', 'namespaces' => [['handle' => 'theme', 'path' => '_theme']]]);
 
 	expect(templateRoots())->toHaveKey('#theme');
 });
 
-it('registers multiple paths for a handle in order', function () {
+it('registers multiple paths for a handle in order', function (): void {
 	$this->createApp(['namespaces' => [
 		['handle' => 'theme', 'path' => '_site'],
 		['handle' => 'theme', 'path' => '_base'],
@@ -64,19 +67,19 @@ it('registers multiple paths for a handle in order', function () {
 	]);
 });
 
-it('registers only the global root without a handle', function () {
+it('registers only the global root without a handle', function (): void {
 	$this->createApp(['namespaces' => [['path' => '_shared']]]);
 
 	expect(templateRoots())->toBe(['' => [templatePath('_shared')]]);
 });
 
-it('skips namespaces without a path', function () {
+it('skips namespaces without a path', function (): void {
 	$this->createApp(['namespaces' => [['handle' => 'theme']]]);
 
 	expect(templateRoots())->toBe([]);
 });
 
-it('renders the handle and path with the site and group', function () {
+it('renders the handle and path with the site and group', function (): void {
 	$this->createApp(['namespaces' => [['handle' => '{site.handle}', 'path' => '_{group.name}/{site.handle}']]]);
 
 	expect(templateRoots())->toBe([
@@ -85,7 +88,7 @@ it('renders the handle and path with the site and group', function () {
 	]);
 });
 
-it('renders the handle and path with the context of the namespace', function () {
+it('renders the handle and path with the context of the namespace', function (): void {
 	$this->createApp(['namespaces' => [[
 		'handle' => '{brand}',
 		'path' => '_{brand}',
@@ -95,14 +98,26 @@ it('renders the handle and path with the context of the namespace', function () 
 	expect(templateRoots())->toHaveKey('@acme', [templatePath('_acme')]);
 });
 
-it('lets the context be changed by an event', function () {
+it('lets the context be changed by an event', function (): void {
 	$this->createApp(['namespaces' => [['handle' => 'theme', 'path' => '_{brand}']]]);
 
-	Event::on(Stack::class, Stack::EVENT_NAMESPACE_CONTEXT, function (NamespaceContextEvent $event) {
-		expect($event->namespace['handle'])->toBe('theme');
+	Event::on(Stack::class, Stack::EVENT_NAMESPACE_CONTEXT, function (NamespaceContextEvent $event): void {
+		expect($event->namespace['handle'] ?? null)->toBe('theme');
 
 		$event->context['brand'] = 'acme';
 	});
 
 	expect(templateRoots())->toHaveKey('@theme', [templatePath('_acme')]);
+});
+
+it('trims the handle of a namespace', function (): void {
+	$this->createApp(['namespaces' => [['handle' => ' {brand} ', 'path' => '_theme', 'context' => ['brand' => 'acme']]]]);
+
+	expect(templateRoots())->toHaveKey('@acme');
+});
+
+it('runs the initialization of the Craft plugin', function (): void {
+	$plugin = new Stack('stack', Craft::$app, ['basePath' => dirname(__DIR__, 2) . '/src', 'hasCpSettings' => true]);
+
+	expect($plugin->hasReadOnlyCpSettings)->toBeTrue();
 });

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SomehowDigital\Craft\Stack\Tests\Support;
 
 use craft\models\Site;
@@ -22,7 +24,7 @@ class Sites extends SitesService
 		]);
 	}
 
-	public function getGroupById(int $groupId, bool $withTrashed = false): ?SiteGroup
+	public function getGroupById(int $groupId, bool $withTrashed = false): SiteGroup
 	{
 		return new SiteGroup([
 			'id' => $groupId,
